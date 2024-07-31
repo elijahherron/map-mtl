@@ -74,7 +74,6 @@
       map.on("load", function () {
         map.on("click", "points", function (e) {
           const properties = e.features[0].properties;
-          const coordinates = e.features[0].geometry.coordinates.slice();
 
           const description = `
           <strong>${properties.title || "No title"}</strong>
@@ -108,10 +107,11 @@
       // Click outside to close info panel
       document.addEventListener("click", function (e) {
         const infoPanel = document.getElementById("info-panel");
-        const closeButton = document.getElementById("close-btn");
-        const isClickInside =
-          infoPanel.contains(e.target) || closeButton.contains(e.target);
-        if (!isClickInside) {
+        const isClickInside = infoPanel.contains(e.target);
+        const isClickOnPanel =
+          e.target === document.getElementById("info-panel");
+
+        if (!isClickInside && !isClickOnPanel) {
           infoPanel.style.display = "none";
         }
       });
