@@ -74,6 +74,7 @@
       map.on("load", function () {
         map.on("click", "points", function (e) {
           const properties = e.features[0].properties;
+          console.log(properties); // Debug: check if properties are being logged
 
           const description = `
           <strong>${properties.title || "No title"}</strong>
