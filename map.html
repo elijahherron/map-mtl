@@ -72,6 +72,7 @@
       });
 
       map.on("load", function () {
+        // Update the event listener for map clicks
         map.on("click", "points", function (e) {
           const properties = e.features[0].properties;
 
@@ -87,12 +88,13 @@
           infoPanel.style.display = "block";
 
           // Add event listener for the close button
-          document
-            .getElementById("close-btn")
-            .addEventListener("click", (e) => {
-              e.stopPropagation(); // Prevent the click event from bubbling up
+          document.getElementById("close-btn").addEventListener(
+            "click",
+            function () {
               infoPanel.style.display = "none";
-            });
+            },
+            { once: true }
+          ); // Ensure this listener is added once per click
         });
 
         map.on("mouseenter", "points", function () {
@@ -107,11 +109,7 @@
       // Click outside to close info panel
       document.addEventListener("click", function (e) {
         const infoPanel = document.getElementById("info-panel");
-        const isClickInside = infoPanel.contains(e.target);
-        const isClickOnPanel =
-          e.target === document.getElementById("info-panel");
-
-        if (!isClickInside && !isClickOnPanel) {
+        if (!infoPanel.contains(e.target) && e.target.id !== "close-btn") {
           infoPanel.style.display = "none";
         }
       });
