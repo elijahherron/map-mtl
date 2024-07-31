@@ -73,24 +73,28 @@
 
       map.on("load", function () {
         map.on("click", "Points", function (e) {
-          const properties = e.features[0].properties;
-          const description = `
-          <strong>${properties.title || "No title"}</strong>
-          <p>${properties.description || "No description"}</p>
-          <img src="${properties.image || "default-image-url"}" alt="Image">
-        `;
+          if (e.features.length > 0) {
+            const properties = e.features[0].properties;
+            const description = `
+              <strong>${properties.title || "No title"}</strong>
+              <p>${properties.description || "No description"}</p>
+              <img src="${properties.image || "default-image-url"}" alt="Image">
+            `;
 
-          const infoPanel = document.getElementById("info-panel");
-          infoPanel.innerHTML =
-            `<button id="close-btn">X</button>` + description;
-          infoPanel.style.display = "block";
+            const infoPanel = document.getElementById("info-panel");
+            infoPanel.innerHTML =
+              `<button id="close-btn">X</button>` + description;
+            infoPanel.style.display = "block";
 
-          // Add event listener for the close button
-          document
-            .getElementById("close-btn")
-            .addEventListener("click", function () {
-              infoPanel.style.display = "none";
-            });
+            // Add event listener for the close button
+            document
+              .getElementById("close-btn")
+              .addEventListener("click", function () {
+                infoPanel.style.display = "none";
+              });
+          } else {
+            console.log("No features found in the click event");
+          }
         });
 
         map.on("mouseenter", "Points", function () {
