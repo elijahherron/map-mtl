@@ -22,7 +22,7 @@
       #info-panel {
         width: 30%;
         height: 100%;
-        background: rgb(243, 241, 232);
+        background: white;
         position: fixed;
         top: 0;
         left: 0;
@@ -77,10 +77,10 @@
           const coordinates = e.features[0].geometry.coordinates.slice();
 
           const description = `
-            <strong>${properties.title || "No title"}</strong>
-            <p>${properties.description || "No description"}</p>
-            <img src="${properties.image || "default-image-url"}" alt="Image">
-          `;
+          <strong>${properties.title || "No title"}</strong>
+          <p>${properties.description || "No description"}</p>
+          <img src="${properties.image || "default-image-url"}" alt="Image">
+        `;
 
           const infoPanel = document.getElementById("info-panel");
           infoPanel.innerHTML =
@@ -88,9 +88,12 @@
           infoPanel.style.display = "block";
 
           // Add event listener for the close button
-          document.getElementById("close-btn").addEventListener("click", () => {
-            infoPanel.style.display = "none";
-          });
+          document
+            .getElementById("close-btn")
+            .addEventListener("click", (e) => {
+              e.stopPropagation(); // Prevent the click event from bubbling up
+              infoPanel.style.display = "none";
+            });
         });
 
         map.on("mouseenter", "points", function () {
@@ -105,9 +108,9 @@
       // Click outside to close info panel
       document.addEventListener("click", function (e) {
         const infoPanel = document.getElementById("info-panel");
+        const closeButton = document.getElementById("close-btn");
         const isClickInside =
-          infoPanel.contains(e.target) ||
-          document.getElementById("map").contains(e.target);
+          infoPanel.contains(e.target) || closeButton.contains(e.target);
         if (!isClickInside) {
           infoPanel.style.display = "none";
         }
