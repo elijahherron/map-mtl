@@ -7,6 +7,17 @@
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
     <style>
       body {
         margin: 0;
@@ -14,74 +25,98 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        font-family: "PT Serif", serif;
       }
       #map {
         flex: 1;
         width: 100%;
       }
       #info-panel {
-        width: 30%;
+        width: 40%;
         height: 100%;
-        background: white;
+        background: #efdebaf3;
         position: fixed;
         top: 0;
         left: 0;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
         overflow: auto;
         display: none;
-        padding: 10px;
         box-sizing: border-box;
         z-index: 1000;
+        color: #d14747;
+        font-style: italic;
       }
       #info-panel img {
+        object-fit: cover;
         max-width: 100%;
-        height: auto;
+        height: 100%;
+      }
+      #info-panel-text {
+        position: absolute;
+        /* top: 8px;
+        left: 16px; */
+        padding: 5px;
+        border-radius: 3px;
+        width: 100%;
+        background: #efdebad6;
       }
       #close-btn {
         position: absolute;
         top: 10px;
         right: 10px;
+        z-index: 1001;
         cursor: pointer;
-        background: #ccc;
+        background: #d1474751;
         border: none;
         padding: 5px;
         border-radius: 3px;
       }
     </style>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div id="map"></div>
-    <div id="info-panel">
-      <button id="close-btn">X</button>
-    </div>
+    <div id="info-panel"></div>
     <script>
+      // TO MAKE THE MAP APPEAR YOU MUST
+      // ADD YOUR ACCESS TOKEN FROM
+      // https://account.mapbox.com
       mapboxgl.accessToken =
         "pk.eyJ1IjoibW9udHJlYWx0aGVuYW5kbm93IiwiYSI6ImNsemE0b2Q3MTAxNnIycm9va2UxNHE5MTAifQ.xzpBb9fHCoJ03Yu7YZm5aw";
       const map = new mapboxgl.Map({
-        container: "map",
+        container: "map", // container ID
         style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",
-        center: [45.52579740220734, -73.5943046423667],
-        zoom: 12,
+        center: [-73.5943046423667, 45.52579740220734], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+        zoom: 12, // starting zoom
       });
 
       map.on("load", function () {
+        console.log("hello");
+        map.on("mouseenter", "pointsupdate", function () {
+          map.getCanvas().style.cursor = "pointer";
+          console.log("boink");
+        });
+
+        map.on("mouseleave", "pointsupdate", function () {
+          map.getCanvas().style.cursor = "";
+          console.log("splat");
+        });
         map.on("click", "pointsupdate", function (e) {
+          console.log("clicked");
           if (e.features.length > 0) {
             const properties = e.features[0].properties;
-            const description = `
-              <strong>${properties.title || "No title"}</strong>
-              <p>${properties.description || "No description"}</p>
-              <img src="${properties.image || "default-image-url"}" alt="Image">
-            `;
+            const content = `
+            <div id=info-panel-text>
+                 <H2>${properties.title || "No title"}</H2>
+                <H3>${properties.description || "No description"}</H3>
+                </div>
+                <img src="${
+                  properties.image || "default-image-url"
+                }" alt="Image">
+              `;
+            console.log(properties, content);
 
             const infoPanel = document.getElementById("info-panel");
-            infoPanel.innerHTML =
-              `<button id="close-btn">X</button>` + description;
+            infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
             infoPanel.style.display = "block";
 
             document
@@ -90,16 +125,8 @@
                 infoPanel.style.display = "none";
               });
           } else {
-            console.log("No features found in the click event");
+            console.log("nuthing here");
           }
-        });
-
-        map.on("mouseenter", "pointsupdate", function () {
-          map.getCanvas().style.cursor = "pointer";
-        });
-
-        map.on("mouseleave", "pointsupdate", function () {
-          map.getCanvas().style.cursor = "";
         });
       });
     </script>
