@@ -72,11 +72,11 @@
       });
 
       map.on("load", function () {
-        map.on("click", "Points", function (e) {
+        map.on("click", "points", function (e) {
           const properties = e.features[0].properties;
           const description = `
           <strong>${properties.title || "No title"}</strong>
-          <p>${String(properties.description) || "No description"}</p>
+          <p>${properties.description || "No description"}</p>
           <img src="${properties.image || "default-image-url"}" alt="Image">
         `;
 
@@ -93,11 +93,11 @@
             });
         });
 
-        map.on("mouseenter", "Points", function () {
+        map.on("mouseenter", "points", function () {
           map.getCanvas().style.cursor = "pointer";
         });
 
-        map.on("mouseleave", "Points", function () {
+        map.on("mouseleave", "points", function () {
           map.getCanvas().style.cursor = "";
         });
       });
