@@ -74,8 +74,6 @@
       map.on("load", function () {
         map.on("click", "points", function (e) {
           const properties = e.features[0].properties;
-          console.log(properties); // Debug: check if properties are being logged
-
           const description = `
           <strong>${properties.title || "No title"}</strong>
           <p>${properties.description || "No description"}</p>
@@ -102,19 +100,6 @@
         map.on("mouseleave", "points", function () {
           map.getCanvas().style.cursor = "";
         });
-      });
-
-      // Click outside to close info panel
-      document.addEventListener("click", function (e) {
-        const infoPanel = document.getElementById("info-panel");
-        const closeButton = document.getElementById("close-btn");
-        const isClickInside = infoPanel.contains(e.target);
-        const isClickOnPanel =
-          e.target === infoPanel || e.target === closeButton;
-
-        if (!isClickInside && !isClickOnPanel) {
-          infoPanel.style.display = "none";
-        }
       });
     </script>
   </body>
