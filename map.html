@@ -1,49 +1,107 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>Montreal Then & Now</title>
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    #map {
-      flex: 1;
-      width: 100%;
-    }
-    #info-panel {
-      width: 30%;
-      height: 100%;
-      background: white;
-      position: fixed;
-      top: 0;
-      left: 0;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-      overflow: auto;
-      display: none; /* Initially hidden */
-      padding: 10px;
-      box-sizing: border-box;
-      z-index: 1000; /* Ensure it appears above other content */
-    }
-    #info-panel img {
-      max-width: 100%;
-      height: auto;
-    }
-    #close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      background: #ccc;
-      border: none;
-      padding: 5px;
-      border-radius: 3px;
-    }
-  </style>
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
-  <link
+  <head>
+    <meta charset="utf-8" />
+    <title>Montreal Then & Now</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      #map {
+        flex: 1;
+        width: 100%;
+      }
+      #info-panel {
+        width: 30%;
+        height: 100%;
+        background: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        overflow: auto;
+        display: none; /* Initially hidden */
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 1000; /* Ensure it appears above other content */
+      }
+      #info-panel img {
+        max-width: 100%;
+        height: auto;
+      }
+      #close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        background: #ccc;
+        border: none;
+        padding: 5px;
+        border-radius: 3px;
+      }
+    </style>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="info-panel">
+      <button id="close-btn">X</button>
+      <!-- Info will be dynamically injected here -->
+    </div>
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoibW9udHJlYWx0aGVuYW5kbm93IiwiYSI6ImNsd3djb3c2YTB6b2MyaW9ta2tzaW1lZ3MifQ.xzlRI4PyANlN7Nw3688X8Q";
+
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",
+        center: [-73.56564131403564, 45.49975854348412],
+        zoom: 12,
+      });
+
+      map.on("load", function () {
+        map.on("click", "points", function (e) {
+          const properties = e.features[0].properties;
+
+          const description = `
+          <strong>${properties.title || "No title"}</strong>
+          <p>${properties.description || "No description"}</p>
+          <img src="${properties.image || "default-image-url"}" alt="Image">
+        `;
+
+          const infoPanel = document.getElementById("info-panel");
+          infoPanel.innerHTML =
+            `<button id="close-btn">X</button>` + description;
+          infoPanel.style.display = "block";
+
+          // Add event listener for the close button
+          document
+            .getElementById("close-btn")
+            .addEventListener("click", function () {
+              infoPanel.style.display = "none";
+            });
+        });
+
+        map.on("mouseenter", "points", function () {
+          map.getCanvas().style.cursor = "pointer";
+        });
+
+        map.on("mouseleave", "points", function () {
+          map.getCanvas().style.cursor = "";
+        });
+      });
+    </script>
+  </body>
+</html>
