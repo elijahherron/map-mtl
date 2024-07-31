@@ -72,7 +72,7 @@
       });
 
       map.on("load", function () {
-        map.on("click", "Points", function (e) {
+        map.on("click", "pointsupdate", function (e) {
           if (e.features.length > 0) {
             const properties = e.features[0].properties;
             const description = `
@@ -97,11 +97,11 @@
           }
         });
 
-        map.on("mouseenter", "Points", function () {
+        map.on("mouseenter", "pointsupdate", function () {
           map.getCanvas().style.cursor = "pointer";
         });
 
-        map.on("mouseleave", "Points", function () {
+        map.on("mouseleave", "pointsupdate", function () {
           map.getCanvas().style.cursor = "";
         });
       });
