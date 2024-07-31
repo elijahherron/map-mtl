@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Interactive Map</title>
+    <title>Montreal Then & Now</title>
     <meta
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
@@ -22,19 +22,30 @@
       #info-panel {
         width: 30%;
         height: 100%;
-        background: white;
+        background: rgb(243, 241, 232);
         position: fixed;
-        bottom: 0;
-        left: 0;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        top: 0;
+        right: 0;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
         overflow: auto;
         display: none; /* Initially hidden */
         padding: 10px;
         box-sizing: border-box;
+        z-index: 1000; /* Ensure it appears above other content */
       }
       #info-panel img {
         max-width: 100%;
         height: auto;
+      }
+      #close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        background: #ccc;
+        border: none;
+        padding: 5px;
+        border-radius: 3px;
       }
     </style>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
@@ -46,6 +57,7 @@
   <body>
     <div id="map"></div>
     <div id="info-panel">
+      <button id="close-btn">X</button>
       <!-- Info will be dynamically injected here -->
     </div>
     <script>
@@ -61,20 +73,22 @@
 
       map.on("load", function () {
         map.on("click", "points", function (e) {
+          const properties = e.features[0].properties;
           const coordinates = e.features[0].geometry.coordinates.slice();
+
           const description = `
-            <strong>${e.features[0].properties.title}</strong>
-            <p>${e.features[0].properties.description}</p>
-            <img src="${e.features[0].properties.image}" alt="Image">
+            <strong>${properties.title || "No title"}</strong>
+            <p>${properties.description || "No description"}</p>
+            <img src="${properties.image || "default-image-url"}" alt="Image">
           `;
 
-          // Update and show the info panel
           const infoPanel = document.getElementById("info-panel");
-          infoPanel.innerHTML = description;
+          infoPanel.innerHTML =
+            `<button id="close-btn">X</button>` + description;
           infoPanel.style.display = "block";
 
-          // Optionally, you can add a click event to the info panel to hide it
-          infoPanel.addEventListener("click", () => {
+          // Add event listener for the close button
+          document.getElementById("close-btn").addEventListener("click", () => {
             infoPanel.style.display = "none";
           });
         });
@@ -86,6 +100,17 @@
         map.on("mouseleave", "points", function () {
           map.getCanvas().style.cursor = "";
         });
+      });
+
+      // Click outside to close info panel
+      document.addEventListener("click", function (e) {
+        const infoPanel = document.getElementById("info-panel");
+        const isClickInside =
+          infoPanel.contains(e.target) ||
+          document.getElementById("map").contains(e.target);
+        if (!isClickInside) {
+          infoPanel.style.display = "none";
+        }
       });
     </script>
   </body>
