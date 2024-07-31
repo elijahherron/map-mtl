@@ -102,6 +102,19 @@
           map.getCanvas().style.cursor = "";
         });
       });
+
+      // Click outside to close info panel
+      document.addEventListener("click", function (e) {
+        const infoPanel = document.getElementById("info-panel");
+        const closeButton = document.getElementById("close-btn");
+        const isClickInside = infoPanel.contains(e.target);
+        const isClickOnPanel =
+          e.target === infoPanel || e.target === closeButton;
+
+        if (!isClickInside && !isClickOnPanel) {
+          infoPanel.style.display = "none";
+        }
+      });
     </script>
   </body>
 </html>
