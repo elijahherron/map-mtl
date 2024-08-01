@@ -84,8 +84,13 @@
         padding: 5px;
         border-radius: 3px;
         z-index: 1002;
+        color: #fff;
+        font-size: 16px;
       }
-      .custom-popup .mapboxgl-popup-content {
+      #close-btn:hover {
+        background: #d14747;
+      }
+      .mapboxgl-popup-content {
         background: #efdebaf3;
         color: #d14747;
         font-style: italic;
@@ -93,21 +98,20 @@
         border-radius: 10px;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
         padding: 5px;
-      }
-      .custom-popup .mapboxgl-popup-tip {
-        border-top-color: #efdebaf3;
-      }
-      .mapboxgl-popup-content {
-        background: #efdebaf3 !important;
-        color: #d14747 !important;
-        font-style: italic;
-        font-family: "PT Serif", serif;
-        border-radius: 10px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-        padding: 5px;
+        z-index: 1001;
       }
       .mapboxgl-popup-tip {
-        border-top-color: #efdebaf3 !important;
+        border-top-color: #efdebaf3 !important; /* Ensure the arrow color matches the popup background */
+        border-top-style: solid;
+        border-top-width: 10px; /* Adjust size as needed */
+        z-index: 1002;
+      }
+      .mapboxgl-popup-content h3 {
+        color: #d14747;
+        margin: 0;
+      }
+      .mapboxgl-popup {
+        z-index: 1001; /* Ensure it is above other elements */
       }
     </style>
   </head>
@@ -154,19 +158,25 @@
         map.on("click", "pointsupdate", function (e) {
           if (e.features.length > 0) {
             const properties = e.features[0].properties;
-            let imageUrl = properties.image || "default-image-url";
             let imageThen = properties.imageThen;
             let imageNow = properties.imageNow;
+            let imageUrl = properties.image || "default-image-url";
 
-            // Check if "imageNow" or "imageThen" exist and prefer them if available
-            let imageSrc = imageNow || imageThen || imageUrl;
+            // Display imageThen, imageNow if both exist, otherwise fallback to imageUrl
+            const images = [];
+            if (imageThen)
+              images.push(`<img src="${imageThen}" alt="Image Then">`);
+            if (imageNow)
+              images.push(`<img src="${imageNow}" alt="Image Now">`);
+            if (images.length === 0)
+              images.push(`<img src="${imageUrl}" alt="Image">`);
 
             const content = `
               <div id="info-panel-text">
                 <h2>${properties.title || "No title"}</h2>
                 <h3>${properties.description || "No description"}</h3>
               </div>
-              <img src="${imageSrc}" alt="Image">
+              ${images.join("")}
             `;
 
             const infoPanel = document.getElementById("info-panel");
