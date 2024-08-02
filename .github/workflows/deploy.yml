@@ -23,10 +23,11 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.email "elijaherron@gmailcom"
-          git config --global user.name "elijahherron"
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
 
       - name: Deploy to GitHub Pages
-        run: npx gh-pages -d . -t true -m "Deploying to GitHub Pages" -b main
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+        run: npx gh-pages -d . -t true -m "Deploying to GitHub Pages" -r https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
