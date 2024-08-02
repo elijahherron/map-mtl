@@ -6,10 +6,16 @@ body {
     height: 100vh;
     font-family: "PT Serif", serif;
   }
+  
   #map {
     flex: 1;
     width: 100%;
+    height: 100%; /* Make sure the map fills the entire height */
+    position: absolute;
+    top: 0;
+    left: 0;
   }
+  
   #info-panel {
     width: 40%;
     height: 100%;
@@ -25,6 +31,7 @@ body {
     color: #d14747;
     font-style: italic;
   }
+  
   #info-panel img {
     object-fit: cover;
     max-width: 100%;
@@ -33,6 +40,7 @@ body {
     display: block;
     margin-top: 45px;
   }
+  
   #info-panel-text {
     display: flex;
     flex-direction: column;
@@ -44,15 +52,18 @@ body {
     box-sizing: border-box;
     z-index: 1001;
   }
+  
   #info-panel-text h2 {
     margin: 0;
     color: #d14747;
   }
+  
   #info-panel-text h3 {
     margin: 0;
     color: black;
     margin-top: 5px;
   }
+  
   #close-btn {
     position: absolute;
     top: 10px;
@@ -66,9 +77,11 @@ body {
     color: #000000;
     font-size: 10px;
   }
+  
   #close-btn:hover {
     background: #d14747;
   }
+  
   .mapboxgl-popup-content {
     background: #efdebaf3;
     color: #d14747;
@@ -79,18 +92,43 @@ body {
     padding: 5px;
     z-index: 998;
   }
+  
   .mapboxgl-popup-tip {
     border-top-color: #efdebaf3 !important;
     border-top-style: solid;
     border-top-width: 10px;
     z-index: 999;
   }
+  
   .mapboxgl-popup-content h3 {
     color: #d14747;
     margin: 0;
   }
+  
   .mapboxgl-popup {
     z-index: 999;
+  }
+  
+  /* Styles for the home button */
+  #home-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1100; /* Ensure it sits above map elements */
+    width: 50px; /* Adjust size as needed */
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  #home-btn img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  #home-btn:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover for effect */
   }
   
   /* Mobile Styles */
