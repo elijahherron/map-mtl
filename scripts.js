@@ -1,12 +1,5 @@
-// Load environment variables from .env file in Node.js
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
-const mapboxAccessToken =
-  process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "YOUR_FALLBACK_TOKEN_HERE";
-
-mapboxgl.accessToken = mapboxAccessToken;
+mapboxgl.accessToken =
+  "pk.eyJ1IjoibW9udHJlYWx0aGVuYW5kbm93IiwiYSI6ImNsemE0b2Q3MTAxNnIycm9va2UxNHE5MTAifQ.xzpBb9fHCoJ03Yu7YZm5aw";
 
 const map = new mapboxgl.Map({
   container: "map",
