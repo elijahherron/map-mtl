@@ -62,13 +62,15 @@ map.on("load", function () {
       infoPanel.style.display = "block";
 
       // Calculate offset based on info panel width (40% of the page width)
-      const offsetX = (window.innerWidth * 0.4) / 2; // Half of the info panel width
+      const isMobile = window.innerWidth <= 768;
+      const offsetX = isMobile ? 0 : (window.innerWidth * 0.4) / 2; // Mobile offset
+      const zoomLevel = isMobile ? 12 : 14.5; // Mobile zoom level
 
-      // Fly to the coordinates with an offset to the right
+      // Fly to the coordinates with an offset to the right or no offset for mobile
       if (Array.isArray(coordinates) && coordinates.length === 2) {
         map.flyTo({
           center: coordinates,
-          zoom: 14.5, // Adjust zoom level as needed
+          zoom: zoomLevel, // Adjust zoom level based on device
           essential: true, // This ensures the animation is always performed
           offset: [offsetX, 0], // Adjusts the center position with respect to the info panel
         });
