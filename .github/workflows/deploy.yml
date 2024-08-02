@@ -21,6 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "elijaherron@gmailcom"
+          git config --global user.name "elijahherron"
+
       - name: Deploy to GitHub Pages
         run: npx gh-pages -d . -t true -m "Deploying to GitHub Pages" -b main
         env:
