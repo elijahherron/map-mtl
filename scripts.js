@@ -1,5 +1,5 @@
-mapboxgl.accessToken =
-  "pk.eyJ1IjoibW9udHJlYWx0aGVuYW5kbm93IiwiYSI6ImNsemE0b2Q3MTAxNnIycm9va2UxNHE5MTAifQ.xzpBb9fHCoJ03Yu7YZm5aw";
+mapboxgl.accessToken = "YOUR_MAPBOX_ACCESS_TOKEN"; // This line will be replaced by GitHub Actions
+
 const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",

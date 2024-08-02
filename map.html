@@ -17,8 +17,8 @@
       href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="map"></div>
@@ -27,5 +27,8 @@
       <!-- Content added dynamically -->
     </div>
     <script src="scripts.js"></script>
+    <script>
+      mapboxgl.accessToken = "YOUR_MAPBOX_ACCESS_TOKEN";
+    </script>
   </body>
 </html>
