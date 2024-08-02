@@ -1,4 +1,3 @@
-// Replace with your actual Mapbox access token for local testing
 mapboxgl.accessToken =
   "pk.eyJ1IjoibW9udHJlYWx0aGVuYW5kbm93IiwiYSI6ImNsemE0b2Q3MTAxNnIycm9va2UxNHE5MTAifQ.xzpBb9fHCoJ03Yu7YZm5aw";
 
@@ -42,7 +41,6 @@ map.on("load", function () {
       let imageNow = properties.imageNow;
       let imageUrl = properties.image || "default-image-url";
 
-      // Display imageThen, imageNow if both exist, otherwise fallback to imageUrl
       const images = [];
       if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
       if (imageNow) images.push(`<img src="${imageNow}" alt="Image Now">`);
@@ -61,19 +59,43 @@ map.on("load", function () {
       infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
       infoPanel.style.display = "block";
 
-      // Calculate offset based on info panel width (40% of the page width)
+      // Determine if on mobile
       const isMobile = window.innerWidth <= 768;
-      const offsetX = isMobile ? 0 : (window.innerWidth * 0.4) / 2; // Mobile offset
-      const zoomLevel = isMobile ? 12 : 14.5; // Mobile zoom level
 
-      // Fly to the coordinates with an offset to the right or no offset for mobile
-      if (Array.isArray(coordinates) && coordinates.length === 2) {
-        map.flyTo({
-          center: coordinates,
-          zoom: zoomLevel, // Adjust zoom level based on device
-          essential: true, // This ensures the animation is always performed
-          offset: [offsetX, 0], // Adjusts the center position with respect to the info panel
-        });
+      if (isMobile) {
+        // Mobile specific offsets
+        const infoPanelWidth = window.innerWidth;
+        const infoPanelHeight = window.innerHeight * 0.5;
+        const offsetX = 0; // Fixed offset for mobile
+        const offsetY =
+          (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
+
+        const zoomLevel = 16; // Adjust zoom level for mobile
+
+        if (Array.isArray(coordinates) && coordinates.length === 2) {
+          map.flyTo({
+            center: coordinates,
+            zoom: zoomLevel,
+            essential: true,
+            offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
+          });
+        }
+      } else {
+        // Desktop specific offsets
+        const infoPanelWidth = window.innerWidth * 0.4;
+        const offsetX = infoPanelWidth / 2; // Half of the info panel width
+        const offsetY = 0;
+
+        const zoomLevel = 16; // Default zoom level for web
+
+        if (Array.isArray(coordinates) && coordinates.length === 2) {
+          map.flyTo({
+            center: coordinates,
+            zoom: zoomLevel,
+            essential: true,
+            offset: [offsetX, offsetY], // Adjust as needed for desktop
+          });
+        }
       }
 
       document
