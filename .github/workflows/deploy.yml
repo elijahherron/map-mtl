@@ -16,18 +16,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14" # Use the version your project requires
+          node-version: "14"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+      - name: Build project
+        run: npm run build
 
       - name: Deploy to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
-        run: npx gh-pages -d . -t true -m "Deploying to GitHub Pages" -r https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        run: |
+          npx gh-pages -d build -t true -m "Deploying to GitHub Pages" -r https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
