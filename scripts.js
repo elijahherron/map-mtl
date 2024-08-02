@@ -36,6 +36,8 @@ map.on("load", function () {
   map.on("click", "pointsupdate", function (e) {
     if (e.features.length > 0) {
       const properties = e.features[0].properties;
+      const coordinates = e.features[0].geometry.coordinates;
+
       let imageThen = properties.imageThen;
       let imageNow = properties.imageNow;
       let imageUrl = properties.image || "default-image-url";
@@ -58,6 +60,19 @@ map.on("load", function () {
       const infoPanel = document.getElementById("info-panel");
       infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
       infoPanel.style.display = "block";
+
+      // Calculate offset based on info panel width (40% of the page width)
+      const offsetX = (window.innerWidth * 0.4) / 2; // Half of the info panel width
+
+      // Fly to the coordinates with an offset to the right
+      if (Array.isArray(coordinates) && coordinates.length === 2) {
+        map.flyTo({
+          center: coordinates,
+          zoom: 14.5, // Adjust zoom level as needed
+          essential: true, // This ensures the animation is always performed
+          offset: [offsetX, 0], // Adjusts the center position with respect to the info panel
+        });
+      }
 
       document
         .getElementById("close-btn")
