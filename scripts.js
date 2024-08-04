@@ -9,105 +9,127 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
-  // Set a fixed circle radius for the "Points" layer
+  // Set up the Points layer
   map.setPaintProperty("Points", "circle-radius", 4);
 
-  // Set up event handlers for mouseenter and mouseleave
-  map.on("mouseenter", "Points", function (e) {
-    map.getCanvas().style.cursor = "pointer";
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const title = e.features[0].properties.title || "No title";
-
-    new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      className: "custom-popup",
-    })
-      .setLngLat(coordinates)
-      .setHTML(`<h3>${title}</h3>`)
-      .addTo(map);
+  // Add the mtlinvisible layer
+  map.addLayer({
+    id: "mtlinvisible",
+    type: "circle",
+    source: "your-data-source-id", // Ensure this matches the source ID used in "Points"
+    paint: {
+      "circle-radius": 4,
+      "circle-color": "#d14747", // Adjust as needed
+    },
+    layout: {
+      visibility: "none", // Start with the layer hidden
+    },
   });
 
-  map.on("mouseleave", "Points", function () {
-    map.getCanvas().style.cursor = "";
-    const popups = document.getElementsByClassName("mapboxgl-popup");
-    if (popups.length) {
-      popups[0].remove();
-    }
-  });
+  // Toggle functionality
+  document
+    .getElementById("layer-toggle")
+    .addEventListener("change", function (e) {
+      const visibility = e.target.checked ? "visible" : "none";
+      map.setLayoutProperty("mtlinvisible", "visibility", visibility);
+    });
 
-  // Handle click events on the "Points" layer
-  map.on("click", "Points", function (e) {
-    if (e.features.length > 0) {
-      const properties = e.features[0].properties;
-      const coordinates = e.features[0].geometry.coordinates;
+  // Function to handle hover events for layers
+  function handleLayerHover(layerId) {
+    map.on("mouseenter", layerId, function () {
+      map.getCanvas().style.cursor = "pointer";
+    });
 
-      let imageThen = properties.imageThen;
-      let imageNow = properties.imageNow;
-      let imageUrl = properties.image || "default-image-url";
+    map.on("mouseleave", layerId, function () {
+      map.getCanvas().style.cursor = "";
+    });
+  }
 
-      const images = [];
-      if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
-      if (imageNow) images.push(`<img src="${imageNow}" alt="Image Now">`);
-      if (images.length === 0)
-        images.push(`<img src="${imageUrl}" alt="Image">`);
+  // Set up hover events for both layers
+  handleLayerHover("Points");
+  handleLayerHover("mtlinvisible");
 
-      const content = `
-        <div id="info-panel-text">
-          <h2>${properties.title || "No title"}</h2>
-          <h3>${properties.description || "No description"}</h3>
-        </div>
-        ${images.join("")}
-      `;
+  // Function to handle click events for layers
+  function handleLayerClick(layerId) {
+    map.on("click", layerId, function (e) {
+      if (e.features.length > 0) {
+        const properties = e.features[0].properties;
+        const coordinates = e.features[0].geometry.coordinates;
 
-      const infoPanel = document.getElementById("info-panel");
-      infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
-      infoPanel.style.display = "block";
+        let imageThen = properties.imageThen;
+        let imageNow = properties.imageNow;
+        let imageUrl = properties.image || "default-image-url";
 
-      // Determine if on mobile
-      const isMobile = window.innerWidth <= 768;
+        const images = [];
+        if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
+        if (imageNow) images.push(`<img src="${imageNow}" alt="Image Now">`);
+        if (images.length === 0)
+          images.push(`<img src="${imageUrl}" alt="Image">`);
 
-      if (isMobile) {
-        // Mobile specific offsets
-        const infoPanelWidth = window.innerWidth;
-        const infoPanelHeight = window.innerHeight * 0.5;
-        const offsetX = 0; // Fixed offset for mobile
-        const offsetY =
-          (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
+        const content = `
+          <div id="info-panel-text">
+            <h2>${properties.title || "No title"}</h2>
+            <h3>${properties.description || "No description"}</h3>
+          </div>
+          ${images.join("")}
+        `;
 
-        const zoomLevel = 16; // Adjust zoom level for mobile
+        const infoPanel = document.getElementById("info-panel");
+        infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
+        infoPanel.style.display = "block";
 
-        if (Array.isArray(coordinates) && coordinates.length === 2) {
-          map.flyTo({
-            center: coordinates,
-            zoom: zoomLevel,
-            essential: true,
-            offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
-          });
+        // Determine if on mobile
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+          // Mobile specific offsets
+          const infoPanelWidth = window.innerWidth;
+          const infoPanelHeight = window.innerHeight * 0.5;
+          const offsetX = 0; // Fixed offset for mobile
+          const offsetY =
+            (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
+
+          const zoomLevel = 16; // Adjust zoom level for mobile
+
+          if (Array.isArray(coordinates) && coordinates.length === 2) {
+            map.flyTo({
+              center: coordinates,
+              zoom: zoomLevel,
+              essential: true,
+              offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
+            });
+          }
+        } else {
+          // Desktop specific offsets
+          const infoPanelWidth = window.innerWidth * 0.4;
+          const offsetX = infoPanelWidth / 2; // Half of the info panel width
+          const offsetY = 0;
+
+          const zoomLevel = 16; // Default zoom level for web
+
+          if (Array.isArray(coordinates) && coordinates.length === 2) {
+            map.flyTo({
+              center: coordinates,
+              zoom: zoomLevel,
+              essential: true,
+              offset: [offsetX, offsetY], // Adjust as needed for desktop
+            });
+          }
         }
-      } else {
-        // Desktop specific offsets
-        const infoPanelWidth = window.innerWidth * 0.4;
-        const offsetX = infoPanelWidth / 2; // Half of the info panel width
-        const offsetY = 0;
 
-        const zoomLevel = 16; // Default zoom level for web
-
-        if (Array.isArray(coordinates) && coordinates.length === 2) {
-          map.flyTo({
-            center: coordinates,
-            zoom: zoomLevel,
-            essential: true,
-            offset: [offsetX, offsetY], // Adjust as needed for desktop
+        document
+          .getElementById("close-btn")
+          .addEventListener("click", function () {
+            infoPanel.style.display = "none";
           });
-        }
       }
+    });
+  }
 
-      document
-        .getElementById("close-btn")
-        .addEventListener("click", function () {
-          infoPanel.style.display = "none";
-        });
-    }
-  });
+  // Set up click events for both layers
+  handleLayerClick("Points");
+  handleLayerClick("mtlinvisible");
+
+  // Ensure layer visibility toggle starts hidden
+  map.setLayoutProperty("mtlinvisible", "visibility", "none");
 });

@@ -1,150 +1,219 @@
 body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    font-family: "PT Serif", serif;
-  }
-  
-  #map {
-    flex: 1;
-    width: 100%;
-    height: 100%; /* Make sure the map fills the entire height */
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: "PT Serif", serif;
+}
+
+#map {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#info-panel {
+  width: 40%;
+  height: 100%;
+  background: #efdebad4;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  overflow: auto;
+  display: none;
+  box-sizing: border-box;
+  z-index: 1000;
+  color: #d14747;
+  font-style: italic;
+}
+
+#info-panel img {
+  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  display: block;
+  margin-top: 45px;
+}
+
+#info-panel-text {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 1001;
+}
+
+#info-panel-text h2 {
+  margin: 0;
+  color: #d14747;
+}
+
+#info-panel-text h3 {
+  margin: 0;
+  color: black;
+  margin-top: 5px;
+}
+
+#close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  background: #efdeba00;
+  border: none;
+  padding: 5px;
+  border-radius: 3px;
+  z-index: 1002;
+  color: #000000;
+  font-size: 10px;
+}
+
+#close-btn:hover {
+  background: #d14747;
+}
+
+.mapboxgl-popup-content {
+  background: #efdebaf3;
+  color: #d14747;
+  font-style: italic;
+  font-family: "PT Serif", serif;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  z-index: 998;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: #efdebaf3 !important;
+  border-top-style: solid;
+  border-top-width: 10px;
+  z-index: 999;
+}
+
+.mapboxgl-popup-content h3 {
+  color: #d14747;
+  margin: 0;
+}
+
+.mapboxgl-popup {
+  z-index: 999;
+}
+
+/* Styles for the home button */
+#home-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1100;
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#home-btn img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#home-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Toggle Switch Styles */
+#toggle-container {
+  position: absolute;
+  top: 75px; /* Adjust as needed */
+  right: 10px;
+  display: flex;
+  align-items: center;
+  z-index: 1100;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px; /* Adjust size as needed */
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccccccaa;
+  transition: .4s;
+  border-radius: 34px; /* Make it a rounded switch */
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  border-radius: 50%;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #d14747;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Text Styles */
+#toggle-text {
+  margin-left: 10px;
+  color: #000000;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgba(209, 71, 71, 0.1); /* Light background */
+}
+
+#toggle-text:hover {
+  background-color: rgba(209, 71, 71, 0.2); /* Slightly darker on hover */
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
   #info-panel {
-    width: 40%;
-    height: 100%;
-    background: #efdebad4;
-    position: fixed;
-    top: 0;
+    width: 100%;
+    height: 50%;
+    bottom: 0;
+    top: auto;
     left: 0;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    overflow: auto;
-    display: none;
-    box-sizing: border-box;
+    box-shadow: none;
     z-index: 1000;
-    color: #d14747;
-    font-style: italic;
   }
-  
-  #info-panel img {
-    object-fit: cover;
-    max-width: 100%;
-    height: auto;
-    width: 100%;
-    display: block;
-    margin-top: 45px;
-  }
-  
   #info-panel-text {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: static;
     padding: 10px;
-    box-sizing: border-box;
-    z-index: 1001;
   }
-  
-  #info-panel-text h2 {
-    margin: 0;
-    color: #d14747;
-  }
-  
-  #info-panel-text h3 {
-    margin: 0;
-    color: black;
-    margin-top: 5px;
-  }
-  
-  #close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    background: #efdeba00;
-    border: none;
-    padding: 5px;
-    border-radius: 3px;
-    z-index: 1002;
-    color: #000000;
-    font-size: 10px;
-  }
-  
-  #close-btn:hover {
-    background: #d14747;
-  }
-  
-  .mapboxgl-popup-content {
-    background: #efdebaf3;
-    color: #d14747;
-    font-style: italic;
-    font-family: "PT Serif", serif;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 5px;
-    z-index: 998;
-  }
-  
-  .mapboxgl-popup-tip {
-    border-top-color: #efdebaf3 !important;
-    border-top-style: solid;
-    border-top-width: 10px;
-    z-index: 999;
-  }
-  
-  .mapboxgl-popup-content h3 {
-    color: #d14747;
-    margin: 0;
-  }
-  
-  .mapboxgl-popup {
-    z-index: 999;
-  }
-  
-  /* Styles for the home button */
-  #home-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1100; /* Ensure it sits above map elements */
-    width: 50px; /* Adjust size as needed */
-    height: auto;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-  
-  #home-btn img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  #home-btn:hover {
-    transform: scale(1.1); /* Slightly enlarge on hover for effect */
-  }
-  
-  /* Mobile Styles */
-  @media (max-width: 768px) {
-    #info-panel {
-      width: 100%;
-      height: 50%;
-      bottom: 0;
-      top: auto;
-      left: 0;
-      box-shadow: none;
-      z-index: 1000;
-    }
-    #info-panel-text {
-      position: static;
-      padding: 10px;
-    }
-  }
-  
+}
