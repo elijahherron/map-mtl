@@ -9,6 +9,10 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
+  // Set a fixed circle radius for the "Points" layer
+  map.setPaintProperty("Points", "circle-radius", 4);
+
+  // Set up event handlers for mouseenter and mouseleave
   map.on("mouseenter", "Points", function (e) {
     map.getCanvas().style.cursor = "pointer";
     const coordinates = e.features[0].geometry.coordinates.slice();
@@ -32,6 +36,7 @@ map.on("load", function () {
     }
   });
 
+  // Handle click events on the "Points" layer
   map.on("click", "Points", function (e) {
     if (e.features.length > 0) {
       const properties = e.features[0].properties;
