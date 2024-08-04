@@ -26,17 +26,24 @@ map.on("load", function () {
     },
   });
 
+  // Initialize the toggle state to off
+  document.getElementById("layer-toggle").checked = false;
+  map.setLayoutProperty("mtlinvisible", "visibility", "none");
+  map.setLayoutProperty("Points", "visibility", "visible");
+
   // Toggle functionality
   document
     .getElementById("layer-toggle")
     .addEventListener("change", function (e) {
       const visibility = e.target.checked ? "visible" : "none";
       map.setLayoutProperty("mtlinvisible", "visibility", visibility);
-      map.setLayoutProperty(
-        "Points",
-        "visibility",
-        visibility === "none" ? "visible" : "none"
-      );
+
+      // Hide Points layer when mtlinvisible is toggled on
+      if (e.target.checked) {
+        map.setLayoutProperty("Points", "visibility", "none");
+      } else {
+        map.setLayoutProperty("Points", "visibility", "visible");
+      }
     });
 
   // Function to handle hover events for layers
