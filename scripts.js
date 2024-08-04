@@ -9,47 +9,63 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
-  // Set up the Points layer
-  map.setPaintProperty("Points", "circle-radius", 4);
+  // Add the Points layer
+  map.addLayer({
+    id: "Points",
+    type: "circle",
+    source: "pointsUpdate",
+    paint: {
+      "circle-radius": {
+        stops: [
+          [0, 4],
+          [22, 10],
+        ],
+        base: 1,
+      },
+      "circle-color": "#d14747",
+    },
+  });
 
   // Add the mtlinvisible layer
   map.addLayer({
     id: "mtlinvisible",
     type: "circle",
-    source: "your-data-source-id", // Ensure this matches the source ID used in "Points"
+    source: "mtlinvisible",
     paint: {
-      "circle-radius": 4,
-      "circle-color": "#d14747", // Adjust as needed
+      "circle-radius": {
+        stops: [
+          [0, 4],
+          [22, 10],
+        ],
+        base: 1,
+      },
+      "circle-color": "#d14747",
     },
     layout: {
-      visibility: "none", // Start with the layer hidden
+      visibility: "none", // Initially hidden
     },
   });
 
-  // Initialize the toggle state to off
+  // Initialize toggle switch
   document.getElementById("layer-toggle").checked = false;
-  map.setLayoutProperty("mtlinvisible", "visibility", "none");
-  map.setLayoutProperty("Points", "visibility", "visible");
 
-  // Toggle functionality
+  // Toggle layer visibility
   document
     .getElementById("layer-toggle")
     .addEventListener("change", function (e) {
       const visibility = e.target.checked ? "visible" : "none";
       map.setLayoutProperty("mtlinvisible", "visibility", visibility);
-
-      // Hide Points layer when mtlinvisible is toggled on
-      if (e.target.checked) {
-        map.setLayoutProperty("Points", "visibility", "none");
-      } else {
-        map.setLayoutProperty("Points", "visibility", "visible");
-      }
+      map.setLayoutProperty(
+        "Points",
+        "visibility",
+        e.target.checked ? "none" : "visible"
+      );
     });
 
-  // Function to handle hover events for layers
+  // Handle hover events
   function handleLayerHover(layerId) {
     map.on("mouseenter", layerId, function () {
-      map.getCanvas().style.cursor = "pointer";
+      map.getCanvas().style.cursor = layerId === "Points" ? "pointer" : "";
     });
 
     map.on("mouseleave", layerId, function () {
@@ -57,20 +73,19 @@ map.on("load", function () {
     });
   }
 
-  // Set up hover events for both layers
   handleLayerHover("Points");
   handleLayerHover("mtlinvisible");
 
-  // Function to handle click events for layers
+  // Handle click events
   function handleLayerClick(layerId) {
     map.on("click", layerId, function (e) {
       if (e.features.length > 0) {
         const properties = e.features[0].properties;
         const coordinates = e.features[0].geometry.coordinates;
 
-        let imageThen = properties.imageThen;
-        let imageNow = properties.imageNow;
-        let imageUrl = properties.image || "default-image-url";
+        const imageThen = properties.imageThen;
+        const imageNow = properties.imageNow;
+        const imageUrl = properties.imageUrl || "default-image-url";
 
         const images = [];
         if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
@@ -90,41 +105,38 @@ map.on("load", function () {
         infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
         infoPanel.style.display = "block";
 
-        // Determine if on mobile
         const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
-          // Mobile specific offsets
           const infoPanelWidth = window.innerWidth;
           const infoPanelHeight = window.innerHeight * 0.5;
-          const offsetX = 0; // Fixed offset for mobile
+          const offsetX = 0;
           const offsetY =
             (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
 
-          const zoomLevel = 16; // Adjust zoom level for mobile
+          const zoomLevel = 16;
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
+              offset: [offsetX, offsetY],
             });
           }
         } else {
-          // Desktop specific offsets
           const infoPanelWidth = window.innerWidth * 0.4;
-          const offsetX = infoPanelWidth / 2; // Half of the info panel width
+          const offsetX = infoPanelWidth / 2;
           const offsetY = 0;
 
-          const zoomLevel = 16; // Default zoom level for web
+          const zoomLevel = 16;
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY], // Adjust as needed for desktop
+              offset: [offsetX, offsetY],
             });
           }
         }
@@ -138,7 +150,6 @@ map.on("load", function () {
     });
   }
 
-  // Set up click events for both layers
   handleLayerClick("Points");
   handleLayerClick("mtlinvisible");
 
