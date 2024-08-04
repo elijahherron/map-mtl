@@ -9,7 +9,7 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
-  map.on("mouseenter", "pointsupdate", function (e) {
+  map.on("mouseenter", "Points", function (e) {
     map.getCanvas().style.cursor = "pointer";
     const coordinates = e.features[0].geometry.coordinates.slice();
     const title = e.features[0].properties.title || "No title";
@@ -24,7 +24,7 @@ map.on("load", function () {
       .addTo(map);
   });
 
-  map.on("mouseleave", "pointsupdate", function () {
+  map.on("mouseleave", "Points", function () {
     map.getCanvas().style.cursor = "";
     const popups = document.getElementsByClassName("mapboxgl-popup");
     if (popups.length) {
@@ -32,7 +32,7 @@ map.on("load", function () {
     }
   });
 
-  map.on("click", "pointsupdate", function (e) {
+  map.on("click", "Points", function (e) {
     if (e.features.length > 0) {
       const properties = e.features[0].properties;
       const coordinates = e.features[0].geometry.coordinates;
