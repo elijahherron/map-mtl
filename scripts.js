@@ -32,6 +32,11 @@ map.on("load", function () {
     .addEventListener("change", function (e) {
       const visibility = e.target.checked ? "visible" : "none";
       map.setLayoutProperty("mtlinvisible", "visibility", visibility);
+      map.setLayoutProperty(
+        "Points",
+        "visibility",
+        visibility === "none" ? "visible" : "none"
+      );
     });
 
   // Function to handle hover events for layers
