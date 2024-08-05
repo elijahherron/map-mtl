@@ -9,47 +9,24 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
-  // Add the Points layer
-  map.addLayer({
-    id: "Points",
-    type: "circle",
-    source: "pointsUpdate",
-    paint: {
-      "circle-radius": {
-        stops: [
-          [0, 4],
-          [22, 10],
-        ],
-        base: 1,
-      },
-      "circle-color": "#d14747",
-    },
-  });
+  // Set up the Points layer
+  map.setPaintProperty("Points", "circle-radius", 4);
 
   // Add the mtlinvisible layer
   map.addLayer({
     id: "mtlinvisible",
     type: "circle",
-    source: "mtlinvisible",
+    source: "your-data-source-id", // Ensure this matches the source ID used in "Points"
     paint: {
-      "circle-radius": {
-        stops: [
-          [0, 4],
-          [22, 10],
-        ],
-        base: 1,
-      },
-      "circle-color": "#d14747",
+      "circle-radius": 4,
+      "circle-color": "#d14747", // Adjust as needed
     },
     layout: {
-      visibility: "none", // Initially hidden
+      visibility: "none", // Start with the layer hidden
     },
   });
 
-  // Initialize toggle switch
-  document.getElementById("layer-toggle").checked = false;
-
-  // Toggle layer visibility
+  // Toggle functionality
   document
     .getElementById("layer-toggle")
     .addEventListener("change", function (e) {
@@ -58,34 +35,52 @@ map.on("load", function () {
       map.setLayoutProperty(
         "Points",
         "visibility",
-        e.target.checked ? "none" : "visible"
+        visibility === "none" ? "visible" : "none"
       );
     });
 
-  // Handle hover events
+  // Function to handle hover events for layers
   function handleLayerHover(layerId) {
-    map.on("mouseenter", layerId, function () {
-      map.getCanvas().style.cursor = layerId === "Points" ? "pointer" : "";
+    map.on("mouseenter", layerId, function (e) {
+      map.getCanvas().style.cursor = "pointer";
+
+      // Display the popup when hovering
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const title = e.features[0].properties.title || "No title";
+
+      new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        className: "custom-popup",
+      })
+        .setLngLat(coordinates)
+        .setHTML(`<h3>${title}</h3>`)
+        .addTo(map);
     });
 
     map.on("mouseleave", layerId, function () {
       map.getCanvas().style.cursor = "";
+      const popups = document.getElementsByClassName("mapboxgl-popup");
+      if (popups.length) {
+        popups[0].remove();
+      }
     });
   }
 
+  // Set up hover events for both layers
   handleLayerHover("Points");
   handleLayerHover("mtlinvisible");
 
-  // Handle click events
+  // Function to handle click events for layers
   function handleLayerClick(layerId) {
     map.on("click", layerId, function (e) {
       if (e.features.length > 0) {
         const properties = e.features[0].properties;
         const coordinates = e.features[0].geometry.coordinates;
 
-        const imageThen = properties.imageThen;
-        const imageNow = properties.imageNow;
-        const imageUrl = properties.imageUrl || "default-image-url";
+        let imageThen = properties.imageThen;
+        let imageNow = properties.imageNow;
+        let imageUrl = properties.image || "default-image-url";
 
         const images = [];
         if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
@@ -105,38 +100,41 @@ map.on("load", function () {
         infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
         infoPanel.style.display = "block";
 
+        // Determine if on mobile
         const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
+          // Mobile specific offsets
           const infoPanelWidth = window.innerWidth;
           const infoPanelHeight = window.innerHeight * 0.5;
-          const offsetX = 0;
+          const offsetX = 0; // Fixed offset for mobile
           const offsetY =
             (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
 
-          const zoomLevel = 16;
+          const zoomLevel = 16; // Adjust zoom level for mobile
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY],
+              offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
             });
           }
         } else {
+          // Desktop specific offsets
           const infoPanelWidth = window.innerWidth * 0.4;
-          const offsetX = infoPanelWidth / 2;
+          const offsetX = infoPanelWidth / 2; // Half of the info panel width
           const offsetY = 0;
 
-          const zoomLevel = 16;
+          const zoomLevel = 16; // Default zoom level for web
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY],
+              offset: [offsetX, offsetY], // Adjust as needed for desktop
             });
           }
         }
@@ -150,6 +148,7 @@ map.on("load", function () {
     });
   }
 
+  // Set up click events for both layers
   handleLayerClick("Points");
   handleLayerClick("mtlinvisible");
 
