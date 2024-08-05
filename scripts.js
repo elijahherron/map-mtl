@@ -9,20 +9,17 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", function () {
-  // Set up the Points layer
-  map.setPaintProperty("Points", "circle-radius", 4);
-
   // Add the mtlinvisible layer
   map.addLayer({
     id: "mtlinvisible",
     type: "circle",
-    source: "your-data-source-id", // Ensure this matches the source ID used in "Points"
+    source: "mtlinvisible", // Ensure this matches the source ID for mtlinvisible tileset
     paint: {
       "circle-radius": 4,
-      "circle-color": "#d14747", // Adjust as needed
+      "circle-color": "#d14747",
     },
     layout: {
-      visibility: "none", // Start with the layer hidden
+      visibility: "none",
     },
   });
 
@@ -41,6 +38,8 @@ map.on("load", function () {
 
   // Function to handle hover events for layers
   function handleLayerHover(layerId) {
+    let popup;
+
     map.on("mouseenter", layerId, function (e) {
       map.getCanvas().style.cursor = "pointer";
 
@@ -48,7 +47,7 @@ map.on("load", function () {
       const coordinates = e.features[0].geometry.coordinates.slice();
       const title = e.features[0].properties.title || "No title";
 
-      new mapboxgl.Popup({
+      popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
         className: "custom-popup",
@@ -60,9 +59,9 @@ map.on("load", function () {
 
     map.on("mouseleave", layerId, function () {
       map.getCanvas().style.cursor = "";
-      const popups = document.getElementsByClassName("mapboxgl-popup");
-      if (popups.length) {
-        popups[0].remove();
+      if (popup) {
+        popup.remove();
+        popup = null;
       }
     });
   }
@@ -80,7 +79,7 @@ map.on("load", function () {
 
         let imageThen = properties.imageThen;
         let imageNow = properties.imageNow;
-        let imageUrl = properties.image || "default-image-url";
+        let imageUrl = properties.imageUrl || "default-image-url"; // Changed to properties.imageUrl
 
         const images = [];
         if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
@@ -100,41 +99,38 @@ map.on("load", function () {
         infoPanel.innerHTML = `<button id="close-btn">X</button>` + content;
         infoPanel.style.display = "block";
 
-        // Determine if on mobile
         const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
-          // Mobile specific offsets
           const infoPanelWidth = window.innerWidth;
           const infoPanelHeight = window.innerHeight * 0.5;
-          const offsetX = 0; // Fixed offset for mobile
+          const offsetX = 0;
           const offsetY =
             (window.innerHeight - infoPanelHeight) / 2 - infoPanelHeight;
 
-          const zoomLevel = 16; // Adjust zoom level for mobile
+          const zoomLevel = 16;
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY], // Use fixed horizontal offset for mobile
+              offset: [offsetX, offsetY],
             });
           }
         } else {
-          // Desktop specific offsets
           const infoPanelWidth = window.innerWidth * 0.4;
-          const offsetX = infoPanelWidth / 2; // Half of the info panel width
+          const offsetX = infoPanelWidth / 2;
           const offsetY = 0;
 
-          const zoomLevel = 16; // Default zoom level for web
+          const zoomLevel = 16;
 
           if (Array.isArray(coordinates) && coordinates.length === 2) {
             map.flyTo({
               center: coordinates,
               zoom: zoomLevel,
               essential: true,
-              offset: [offsetX, offsetY], // Adjust as needed for desktop
+              offset: [offsetX, offsetY],
             });
           }
         }
