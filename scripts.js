@@ -6,15 +6,10 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",
   center: [-73.57731, 45.50022],
   zoom: 12.76,
-  dragRotate: false, // Disable map rotation with drag
-  pitchWithRotate: false, // Disable map pitch with rotate
+  pitchWithRotate: false, // Disable tilting while allowing rotation
 });
 
-// Disable map rotation with right click + drag on desktop
-map.touchZoomRotate.disableRotation();
-
 map.on("load", function () {
-  // Increase circle-radius on mobile
   const isMobile = window.innerWidth <= 768;
 
   map.addLayer({
