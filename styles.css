@@ -59,9 +59,10 @@ body {
 }
 
 #info-panel-text h3 {
-  margin: 0;
-  color: #d14747a9;
-  margin-top: 5px;
+  position: absolute;
+  top: 0px;
+  right: 50px;
+  color: #000000b6;
 }
 
 #close-btn {
