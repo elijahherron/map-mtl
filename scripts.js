@@ -6,16 +6,23 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",
   center: [-73.57731, 45.50022],
   zoom: 12.76,
+  dragRotate: false, // Disable map rotation with drag
+  pitchWithRotate: false, // Disable map pitch with rotate
 });
 
+// Disable map rotation with right click + drag on desktop
+map.touchZoomRotate.disableRotation();
+
 map.on("load", function () {
-  // Add the mtlinvisible layer
+  // Increase circle-radius on mobile
+  const isMobile = window.innerWidth <= 768;
+
   map.addLayer({
     id: "mtlinvisible",
     type: "circle",
-    source: "mtlinvisible", // Ensure this matches the source ID for mtlinvisible tileset
+    source: "mtlinvisible",
     paint: {
-      "circle-radius": 4,
+      "circle-radius": isMobile ? 8 : 4, // Increased radius on mobile
       "circle-color": "#d14747",
     },
     layout: {
@@ -23,7 +30,7 @@ map.on("load", function () {
     },
   });
 
-  // Toggle functionality
+  // Toggle functionality remains the same...
   document
     .getElementById("layer-toggle")
     .addEventListener("change", function (e) {
@@ -36,6 +43,7 @@ map.on("load", function () {
       );
     });
 
+  // The rest of your hover and click handlers remain unchanged...
   // Function to handle hover events for layers
   function handleLayerHover(layerId) {
     let popup;
