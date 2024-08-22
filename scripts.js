@@ -6,9 +6,9 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/montrealthenandnow/clevx8q00000901o4q8dsipxd",
   center: [-73.57731, 45.50022],
   zoom: 12.76,
-  pitchWithRotate: false, // Disable tilting while allowing rotation
+  pitchWithRotate: false,
 });
-
+map.touchPitch.disable();
 map.on("load", function () {
   const isMobile = window.innerWidth <= 768;
 
