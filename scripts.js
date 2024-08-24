@@ -8,7 +8,9 @@ const map = new mapboxgl.Map({
   zoom: 12.76,
   pitchWithRotate: false,
 });
+
 map.touchPitch.disable();
+
 map.on("load", function () {
   const isMobile = window.innerWidth <= 768;
 
@@ -25,7 +27,6 @@ map.on("load", function () {
     },
   });
 
-  // Toggle functionality remains the same...
   document
     .getElementById("layer-toggle")
     .addEventListener("change", function (e) {
@@ -38,15 +39,12 @@ map.on("load", function () {
       );
     });
 
-  // The rest of your hover and click handlers remain unchanged...
-  // Function to handle hover events for layers
   function handleLayerHover(layerId) {
     let popup;
 
     map.on("mouseenter", layerId, function (e) {
       map.getCanvas().style.cursor = "pointer";
 
-      // Display the popup when hovering
       const coordinates = e.features[0].geometry.coordinates.slice();
       const title = e.features[0].properties.title || "No title";
 
@@ -69,20 +67,19 @@ map.on("load", function () {
     });
   }
 
-  // Set up hover events for both layers
   handleLayerHover("Points");
   handleLayerHover("mtlinvisible");
 
-  // Function to handle click events for layers
   function handleLayerClick(layerId) {
     map.on("click", layerId, function (e) {
       if (e.features.length > 0) {
         const properties = e.features[0].properties;
         const coordinates = e.features[0].geometry.coordinates;
+        const featureId = e.features[0].id;
 
         let imageThen = properties.imageThen;
         let imageNow = properties.imageNow;
-        let imageUrl = properties.imageUrl || "default-image-url"; // Changed to properties.imageUrl
+        let imageUrl = properties.imageUrl || "default-image-url";
 
         const images = [];
         if (imageThen) images.push(`<img src="${imageThen}" alt="Image Then">`);
@@ -147,10 +144,8 @@ map.on("load", function () {
     });
   }
 
-  // Set up click events for both layers
   handleLayerClick("Points");
   handleLayerClick("mtlinvisible");
 
-  // Ensure layer visibility toggle starts hidden
   map.setLayoutProperty("mtlinvisible", "visibility", "none");
 });
