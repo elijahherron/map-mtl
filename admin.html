@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Montreal Map Admin</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+    <link rel="stylesheet" href="admin-styles.css" />
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <h1>Add New Point</h1>
+            
+            <div class="github-config">
+                <h3>GitHub Configuration</h3>
+                <div class="form-group">
+                    <label for="github-user">GitHub Username:</label>
+                    <input type="text" id="github-user" placeholder="your-username" value="elijahherron">
+                </div>
+                <div class="form-group">
+                    <label for="github-repo">Repository Name:</label>
+                    <input type="text" id="github-repo" placeholder="map-mtl" value="map-mtl">
+                </div>
+                <div class="form-group">
+                    <label for="github-branch">Branch:</label>
+                    <input type="text" id="github-branch" placeholder="main" value="main">
+                </div>
+            </div>
+            
+            <form id="point-form">
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address (optional):</label>
+                    <input type="text" id="address" name="address" placeholder="Enter Montreal address">
+                    <button type="button" id="geocode-btn">Get Coordinates</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Coordinates:</label>
+                    <div class="coordinates">
+                        <input type="number" id="longitude" name="longitude" placeholder="Longitude" step="any" required>
+                        <input type="number" id="latitude" name="latitude" placeholder="Latitude" step="any" required>
+                    </div>
+                    <small>Click on the map, enter address above, or manually input coordinates</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image-then">Image Then:</label>
+                    <div class="file-drop-zone" id="drop-zone-then">
+                        <p>Drag & drop image here or click to select</p>
+                        <input type="file" id="image-then" accept="image/*" hidden>
+                    </div>
+                    <div class="image-preview" id="preview-then"></div>
+                    <div class="github-instructions" id="github-instructions-then"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image-now">Image Now:</label>
+                    <div class="file-drop-zone" id="drop-zone-now">
+                        <p>Drag & drop image here or click to select</p>
+                        <input type="file" id="image-now" accept="image/*" hidden>
+                    </div>
+                    <div class="image-preview" id="preview-now"></div>
+                    <div class="github-instructions" id="github-instructions-now"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="invisible-layer"> Add to Montreal Invisible layer
+                    </label>
+                </div>
+                
+                <button type="submit">Add Point</button>
+                <button type="button" id="export-btn">Export Data</button>
+            </form>
+            
+            <div id="output-section">
+                <h3>Export Output:</h3>
+                <textarea id="output" readonly rows="10"></textarea>
+                <button type="button" id="copy-btn">Copy to Clipboard</button>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div id="admin-map"></div>
+        </div>
+    </div>
+    
+    <script src="admin-script.js"></script>
+</body>
+</html>
