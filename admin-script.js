@@ -17,6 +17,22 @@ function updatePointCounter() {
   if (counterElement) {
     counterElement.textContent = pointsData.length;
   }
+  
+  // Update points list
+  const pointsList = document.getElementById("points-list");
+  const pointsListItems = document.getElementById("points-list-items");
+  
+  if (pointsData.length > 0) {
+    pointsList.style.display = "block";
+    pointsListItems.innerHTML = pointsData
+      .map((point, index) => 
+        `<li><strong>${index + 1}.</strong> ${point.properties.title || 'Untitled'} 
+         (${point.geometry.coordinates[1].toFixed(4)}, ${point.geometry.coordinates[0].toFixed(4)})</li>`
+      )
+      .join('');
+  } else {
+    pointsList.style.display = "none";
+  }
 }
 
 // Initialize admin interface
@@ -284,6 +300,10 @@ document.getElementById("point-form").addEventListener("submit", (e) => {
 
   // Add to points array
   pointsData.push(pointData);
+  
+  // Debug logging
+  console.log(`Point added! Total points: ${pointsData.length}`);
+  console.log('Current pointsData:', pointsData);
 
   // Update point counter
   updatePointCounter();
@@ -316,6 +336,9 @@ document.getElementById("point-form").addEventListener("submit", (e) => {
 
 // Export functionality
 document.getElementById("export-btn").addEventListener("click", () => {
+  console.log(`Export triggered. Points available: ${pointsData.length}`);
+  console.log('Points data at export:', pointsData);
+  
   if (pointsData.length === 0) {
     alert("No points to export");
     return;
