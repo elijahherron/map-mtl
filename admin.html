@@ -13,6 +13,45 @@
         <div class="sidebar">
             <h1>Add New Point</h1>
             
+            <div class="workflow-instructions">
+                <h3>📋 Complete Workflow</h3>
+                <div class="workflow-steps">
+                    <div class="step">
+                        <strong>1. Configure GitHub Settings</strong>
+                        <p>Set your GitHub username, repo name, and branch below (usually pre-filled)</p>
+                    </div>
+                    <div class="step">
+                        <strong>2. Add Point Information</strong>
+                        <p>Fill in title and description for your map point</p>
+                    </div>
+                    <div class="step">
+                        <strong>3. Set Location (choose one method):</strong>
+                        <ul>
+                            <li><strong>Address:</strong> Type Montreal address → click "Get Coordinates"</li>
+                            <li><strong>Map Click:</strong> Click directly on the map</li>
+                            <li><strong>Manual:</strong> Enter lat/lng coordinates directly</li>
+                        </ul>
+                    </div>
+                    <div class="step">
+                        <strong>4. Upload Images</strong>
+                        <p>Drag & drop "then" and "now" images. Copy the generated filenames!</p>
+                    </div>
+                    <div class="step">
+                        <strong>5. Add Point</strong>
+                        <p>Click "Add Point" - your data is stored locally</p>
+                    </div>
+                    <div class="step">
+                        <strong>6. Upload Images to GitHub</strong>
+                        <p>Go to your GitHub repo → images folder → drag & drop files with exact copied filenames</p>
+                    </div>
+                    <div class="step">
+                        <strong>7. Export & Update Dataset</strong>
+                        <p>Click "Export Data" → copy GeoJSON → update your Mapbox dataset in Mapbox Studio</p>
+                    </div>
+                </div>
+                <button type="button" id="toggle-instructions" class="toggle-btn">Hide Instructions</button>
+            </div>
+            
             <div class="github-config">
                 <h3>GitHub Configuration</h3>
                 <div class="form-group">
@@ -87,6 +126,17 @@
             
             <div id="output-section">
                 <h3>Export Output:</h3>
+                <div class="export-instructions">
+                    <p><strong>📤 Final Steps:</strong></p>
+                    <ol>
+                        <li>Copy the GeoJSON below</li>
+                        <li>Go to <a href="https://studio.mapbox.com" target="_blank">Mapbox Studio</a></li>
+                        <li>Navigate to your datasets</li>
+                        <li>Select your map dataset or create a new one</li>
+                        <li>Import/replace with this GeoJSON data</li>
+                        <li>Your map will update with new points!</li>
+                    </ol>
+                </div>
                 <textarea id="output" readonly rows="10"></textarea>
                 <button type="button" id="copy-btn">Copy to Clipboard</button>
             </div>

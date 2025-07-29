@@ -174,6 +174,67 @@ input[type="checkbox"] {
     margin-right: 8px;
 }
 
+.workflow-instructions {
+    background: #e8f4fd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #007bff;
+}
+
+.workflow-instructions h3 {
+    margin: 0 0 15px 0;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.workflow-steps {
+    margin-bottom: 15px;
+}
+
+.step {
+    margin-bottom: 12px;
+    padding: 8px;
+    background: white;
+    border-radius: 4px;
+    border-left: 3px solid #007bff;
+}
+
+.step strong {
+    color: #007bff;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.step p, .step ul {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.step ul {
+    margin-top: 4px;
+    padding-left: 20px;
+}
+
+.step li {
+    margin-bottom: 2px;
+}
+
+.toggle-btn {
+    background: #007bff;
+    font-size: 12px;
+    padding: 6px 12px;
+}
+
+.toggle-btn:hover {
+    background: #0056b3;
+}
+
+.workflow-instructions.collapsed .workflow-steps {
+    display: none;
+}
+
 .github-config {
     background: #f9f9f9;
     padding: 15px;
@@ -235,6 +296,40 @@ input[type="checkbox"] {
 
 .copy-filename:hover {
     background: #0056b3;
+}
+
+.export-instructions {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid #ffeaa7;
+}
+
+.export-instructions p {
+    margin: 0 0 8px 0;
+    font-weight: bold;
+    color: #856404;
+}
+
+.export-instructions ol {
+    margin: 0;
+    padding-left: 20px;
+    color: #856404;
+}
+
+.export-instructions li {
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.export-instructions a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.export-instructions a:hover {
+    text-decoration: underline;
 }
 
 /* Map marker styles */

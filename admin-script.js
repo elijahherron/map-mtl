@@ -307,6 +307,20 @@ document.getElementById('copy-btn').addEventListener('click', () => {
     alert('Copied to clipboard!');
 });
 
+// Toggle instructions visibility
+document.getElementById('toggle-instructions').addEventListener('click', function() {
+    const instructions = document.querySelector('.workflow-instructions');
+    const button = this;
+    
+    if (instructions.classList.contains('collapsed')) {
+        instructions.classList.remove('collapsed');
+        button.textContent = 'Hide Instructions';
+    } else {
+        instructions.classList.add('collapsed');
+        button.textContent = 'Show Instructions';
+    }
+});
+
 // Copy to clipboard function
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
