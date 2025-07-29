@@ -346,6 +346,43 @@ input[type="checkbox"] {
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
+.point-counter {
+    background: #e8f5e8;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #28a745;
+    text-align: center;
+}
+
+.point-counter strong {
+    color: #28a745;
+    font-size: 16px;
+}
+
+.point-counter #point-count {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.export-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.export-buttons button {
+    flex: 1;
+}
+
+#download-btn {
+    background: #28a745;
+}
+
+#download-btn:hover {
+    background: #218838;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .admin-container {
@@ -359,5 +396,9 @@ input[type="checkbox"] {
     
     .map-container {
         height: 40vh;
+    }
+    
+    .export-buttons {
+        flex-direction: column;
     }
 }
