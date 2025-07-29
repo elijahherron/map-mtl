@@ -347,7 +347,8 @@ function createShareModal() {
           <div class="share-buttons">
             <button id="email-share" onclick="shareViaEmail()">📧 Email</button>
             <button id="sms-share" onclick="shareViaSMS()">💬 Message</button>
-            <button id="twitter-share" onclick="shareViaTwitter()">🐦 Twitter</button>
+          </div>
+          <div class="share-buttons-single">
             <button id="facebook-share" onclick="shareViaFacebook()">📘 Facebook</button>
           </div>
         </div>
@@ -410,12 +411,6 @@ function shareViaSMS() {
   window.open(`sms:?body=${message}`);
 }
 
-// Share via Twitter
-function shareViaTwitter() {
-  const { shareUrl, title } = window.currentShareData;
-  const text = encodeURIComponent(`Check out this Montreal Then & Now location: ${title}`);
-  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`);
-}
 
 // Share via Facebook
 function shareViaFacebook() {

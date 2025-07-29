@@ -425,7 +425,18 @@ input:checked + .slider:before {
   gap: 10px;
 }
 
-.share-buttons button {
+.share-buttons-single {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.share-buttons-single button {
+  width: calc(50% - 5px);
+}
+
+.share-buttons button,
+.share-buttons-single button {
   padding: 12px 16px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -440,7 +451,8 @@ input:checked + .slider:before {
   gap: 6px;
 }
 
-.share-buttons button:hover {
+.share-buttons button:hover,
+.share-buttons-single button:hover {
   background: #f8f9fa;
   border-color: #007bff;
   transform: translateY(-1px);
@@ -448,7 +460,6 @@ input:checked + .slider:before {
 
 #email-share:hover { border-color: #dc3545; }
 #sms-share:hover { border-color: #28a745; }
-#twitter-share:hover { border-color: #1da1f2; }
 #facebook-share:hover { border-color: #4267b2; }
 
 /* Shared Point Modal - Larger on Desktop */
