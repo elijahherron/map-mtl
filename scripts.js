@@ -163,11 +163,44 @@ function showSharedPointModal(title, description, imageThen, imageNow, coordinat
   });
 }
 
+// Initialize legend toggle functionality for all devices
+function initializeLegendToggle() {
+  const legendHeader = document.getElementById('legend-header');
+  const legendContent = document.getElementById('legend-content');
+  const legendToggle = document.getElementById('legend-toggle');
+  const isMobile = window.innerWidth <= 768;
+  
+  if (legendHeader && legendContent && legendToggle) {
+    // Set initial state: expanded on desktop, collapsed on mobile
+    if (!isMobile) {
+      legendContent.classList.add('expanded');
+      legendToggle.classList.add('expanded');
+    }
+    
+    legendHeader.addEventListener('click', function() {
+      const isExpanded = legendContent.classList.contains('expanded');
+      
+      if (isExpanded) {
+        // Collapse
+        legendContent.classList.remove('expanded');
+        legendToggle.classList.remove('expanded');
+      } else {
+        // Expand
+        legendContent.classList.add('expanded');
+        legendToggle.classList.add('expanded');
+      }
+    });
+  }
+}
+
 map.on("load", function () {
   const isMobile = window.innerWidth <= 768;
   
   // Check if this is a shared link
   checkForSharedPoint();
+  
+  // Initialize legend toggle for all devices
+  initializeLegendToggle();
 
   // Function to apply year-based colors with full override
   function applyYearColors() {
