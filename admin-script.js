@@ -88,11 +88,21 @@ function handleFileSelect(file, previewElement) {
     return;
   }
 
-  // Generate unique filename with timestamp
-  const timestamp = Date.now();
-  const fileExtension = file.name.split(".").pop();
-  const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const uniqueFilename = `${timestamp}_${sanitizedName}`;
+  // Generate human-readable filename
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+  const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
+  const fileExtension = file.name.split(".").pop().toLowerCase();
+  
+  // Clean the original filename - keep alphanumeric and common punctuation
+  const cleanName = file.name
+    .replace(`.${file.name.split(".").pop()}`, '') // remove extension
+    .replace(/[^a-zA-Z0-9\s\-_]/g, '') // keep letters, numbers, spaces, dashes, underscores
+    .replace(/\s+/g, '-') // replace spaces with dashes
+    .toLowerCase()
+    .substring(0, 30); // limit length
+  
+  const uniqueFilename = `${dateStr}_${timeStr}_${cleanName}.${fileExtension}`;
 
   // Create preview
   const reader = new FileReader();
@@ -384,24 +394,26 @@ document
 
 // Copy to clipboard function
 function copyToClipboard(text) {
+  const button = event?.target;
+  
   // Try modern clipboard API first (requires HTTPS)
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        showCopySuccess();
+        showCopySuccess(button);
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
-        fallbackCopyToClipboard(text);
+        fallbackCopyToClipboard(text, button);
       });
   } else {
     // Fallback for HTTP or older browsers
-    fallbackCopyToClipboard(text);
+    fallbackCopyToClipboard(text, button);
   }
 }
 
-function fallbackCopyToClipboard(text) {
+function fallbackCopyToClipboard(text, button) {
   // Create a temporary textarea element
   const textArea = document.createElement("textarea");
   textArea.value = text;
@@ -415,7 +427,7 @@ function fallbackCopyToClipboard(text) {
   try {
     const successful = document.execCommand("copy");
     if (successful) {
-      showCopySuccess();
+      showCopySuccess(button);
     } else {
       alert("Copy failed. Please select and copy manually.");
     }
@@ -427,9 +439,9 @@ function fallbackCopyToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
-function showCopySuccess() {
+function showCopySuccess(button) {
   // Show brief success feedback
-  const button = event.target;
+  if (!button) return;
   const originalText = button.textContent;
   button.textContent = "✓";
   button.style.background = "#28a745";
