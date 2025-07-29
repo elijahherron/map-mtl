@@ -11,6 +11,46 @@ const map = new mapboxgl.Map({
 
 map.touchPitch.disable();
 
+// Natural color scheme ramping from cool (old) to warm (new)
+const YEAR_COLORS = {
+  'Before 1900': '#4F7CAC',    // Muted Steel Blue
+  '1900-1919': '#6B8CAE',      // Dusty Blue
+  '1920-1939': '#8E9AAF',      // Blue Gray
+  '1940-1959': '#B8860B',      // Dark Goldenrod
+  '1960-1979': '#CD853F',      // Peru (Burnt Orange)
+  '1980-1999': '#D2691E',      // Chocolate Orange
+  '2000-2019': '#d14747',      // Site red theme
+  '2020+': '#CC8B65',          // Terracotta
+  'Unknown': '#7A8287'         // Warm Gray
+};
+
+// Function to extract year from description and determine color group
+function getYearGroup(description) {
+  if (!description) return 'Unknown';
+  
+  // Extract 4-digit year from description
+  const yearMatch = description.match(/\b(19|20)\d{2}\b/);
+  if (!yearMatch) return 'Unknown';
+  
+  const year = parseInt(yearMatch[0]);
+  
+  if (year < 1900) return 'Before 1900';
+  if (year >= 1900 && year <= 1919) return '1900-1919';
+  if (year >= 1920 && year <= 1939) return '1920-1939';
+  if (year >= 1940 && year <= 1959) return '1940-1959';
+  if (year >= 1960 && year <= 1979) return '1960-1979';
+  if (year >= 1980 && year <= 1999) return '1980-1999';
+  if (year >= 2000 && year <= 2019) return '2000-2019';
+  if (year >= 2020) return '2020+';
+  
+  return 'Unknown';
+}
+
+// Function to get color for a year group
+function getColorForYearGroup(yearGroup) {
+  return YEAR_COLORS[yearGroup] || YEAR_COLORS['Unknown'];
+}
+
 // Check for shared URL parameters on page load
 function checkForSharedPoint() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -128,6 +168,88 @@ map.on("load", function () {
   
   // Check if this is a shared link
   checkForSharedPoint();
+
+  // Function to apply year-based colors with full override
+  function applyYearColors() {
+    if (map.getLayer("Points")) {
+      // Override circle color with simpler, working logic
+      map.setPaintProperty("Points", "circle-color", [
+        "case",
+        // Check if description contains year patterns
+        ["all", ["has", "description"], ["!=", ["get", "description"], null], ["!=", ["get", "description"], ""]],
+        [
+          "case",
+          // Before 1900 (if any historical references)
+          ["in", "18", ["to-string", ["get", "description"]]], "#4F7CAC",
+          // 1900-1919
+          ["any", 
+            ["in", "190", ["to-string", ["get", "description"]]], 
+            ["in", "191", ["to-string", ["get", "description"]]]
+          ], "#6B8CAE",
+          // 1920-1939
+          ["any", 
+            ["in", "192", ["to-string", ["get", "description"]]], 
+            ["in", "193", ["to-string", ["get", "description"]]]
+          ], "#8E9AAF",
+          // 1940-1959
+          ["any", 
+            ["in", "194", ["to-string", ["get", "description"]]], 
+            ["in", "195", ["to-string", ["get", "description"]]]
+          ], "#B8860B",
+          // 1960-1979
+          ["any", 
+            ["in", "196", ["to-string", ["get", "description"]]], 
+            ["in", "197", ["to-string", ["get", "description"]]]
+          ], "#CD853F",
+          // 1980-1999
+          ["any", 
+            ["in", "198", ["to-string", ["get", "description"]]], 
+            ["in", "199", ["to-string", ["get", "description"]]]
+          ], "#D2691E",
+          // 2000-2019
+          ["any", 
+            ["in", "200", ["to-string", ["get", "description"]]], 
+            ["in", "201", ["to-string", ["get", "description"]]]
+          ], "#d14747",
+          // 2020+
+          ["in", "202", ["to-string", ["get", "description"]]], "#CC8B65",
+          // Default - Unknown
+          "#7A8287"
+        ],
+        // If no description, use unknown color
+        "#7A8287"
+      ]);
+      
+      // Force opacity to 1.0 to override any Mapbox style opacity
+      map.setPaintProperty("Points", "circle-opacity", 1.0);
+      
+      // Small subtle outline for contrast
+      map.setPaintProperty("Points", "circle-stroke-width", 0.5);
+      map.setPaintProperty("Points", "circle-stroke-color", "rgba(255, 255, 255, 0.6)");
+      map.setPaintProperty("Points", "circle-stroke-opacity", 1.0);
+      
+      // Keep original circle size
+      const isMobile = window.innerWidth <= 768;
+      map.setPaintProperty("Points", "circle-radius", isMobile ? 8 : 4);
+    }
+  }
+
+  // Apply colors on multiple events to ensure they stick
+  map.on('styledata', applyYearColors);
+  map.on('sourcedata', applyYearColors);
+
+  // Also apply immediately if layer already exists
+  applyYearColors();
+  
+  // Retry applying colors after a short delay to ensure they stick
+  setTimeout(() => {
+    applyYearColors();
+  }, 1000);
+  
+  // Final retry after 3 seconds
+  setTimeout(() => {
+    applyYearColors();
+  }, 3000);
 
   map.addLayer({
     id: "mtlinvisible",
