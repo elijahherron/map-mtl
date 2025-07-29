@@ -16,30 +16,72 @@ function checkForSharedPoint() {
   const urlParams = new URLSearchParams(window.location.search);
   const sharedPoint = urlParams.get('point');
   const sharedTitle = urlParams.get('title');
+  const sharedDescription = urlParams.get('description');
   const sharedImageThen = urlParams.get('imageThen');
   const sharedImageNow = urlParams.get('imageNow');
+  const sharedLat = urlParams.get('lat');
+  const sharedLng = urlParams.get('lng');
   
   if (sharedPoint && (sharedImageThen || sharedImageNow)) {
-    // Wait for map to load, then show the shared content
+    // Wait for map to load, then show the shared content and zoom to location
     setTimeout(() => {
-      showSharedPointModal(sharedTitle, sharedImageThen, sharedImageNow);
+      // Zoom to location if coordinates are available
+      if (sharedLat && sharedLng) {
+        const coordinates = [parseFloat(sharedLng), parseFloat(sharedLat)];
+        
+        // Calculate offset to position marker to the right of modal
+        const isMobile = window.innerWidth <= 768;
+        const modalWidth = isMobile ? window.innerWidth * 0.95 : Math.min(700, window.innerWidth * 0.6);
+        const offsetX = isMobile ? 0 : modalWidth / 2;
+        
+        map.flyTo({
+          center: coordinates,
+          zoom: 16,
+          duration: 1500,
+          offset: [-offsetX, 0]
+        });
+        
+        // Show modal after zoom starts
+        setTimeout(() => {
+          showSharedPointModal(sharedTitle, sharedDescription, sharedImageThen, sharedImageNow, coordinates);
+        }, 300);
+      } else {
+        // Show modal without coordinates
+        setTimeout(() => {
+          showSharedPointModal(sharedTitle, sharedDescription, sharedImageThen, sharedImageNow);
+        }, 300);
+      }
     }, 1000);
   }
 }
 
 // Show shared point in a modal
-function showSharedPointModal(title, imageThen, imageNow) {
+function showSharedPointModal(title, description, imageThen, imageNow, coordinates) {
   const images = [];
-  if (imageThen) images.push(`<div style="margin-bottom: 0;"><img src="${imageThen}" alt="Image Then" style="max-width: 100%; display: block; margin: 0; padding: 0; border: 0;"></div>`);
-  if (imageNow) images.push(`<div style="margin-top: 10px; margin-bottom: 0;"><img src="${imageNow}" alt="Image Now" style="max-width: 100%; display: block; margin: 0; padding: 0; border: 0;"></div>`);
+  if (imageThen) images.push(`<div style="margin-bottom: 0;"><img src="${imageThen}" alt="Image Then" style="width: 100%; height: auto; display: block; margin: 0; padding: 0; border: 0;"></div>`);
+  if (imageNow) images.push(`<div style="margin-top: 10px; margin-bottom: 0;"><img src="${imageNow}" alt="Image Now" style="width: 100%; height: auto; display: block; margin: 0; padding: 0; border: 0;"></div>`);
+  
+  // Add temporary marker to map if coordinates are provided
+  let tempMarker = null;
+  if (coordinates && coordinates.length === 2) {
+    tempMarker = new mapboxgl.Marker({
+      color: '#d14747',
+      scale: 1.5
+    })
+    .setLngLat(coordinates)
+    .addTo(map);
+  }
   
   const modal = document.createElement('div');
   modal.className = 'modal';
   modal.style.display = 'block';
   modal.innerHTML = `
-    <div class="modal-content">
+    <div class="modal-content shared-point-modal">
       <div class="modal-header">
-        <h3>${title || 'Montreal Then & Now'}</h3>
+        <div style="position: relative; width: 100%;">
+          <h3 style="margin: 0; color: #d14747; font-family: 'PT Serif', serif; font-style: italic;">${title || 'Montreal Then & Now'}</h3>
+          <h3 style="position: absolute; top: 0; right: 30px; margin: 0; color: #000000b6; font-family: 'PT Serif', serif; font-style: italic; font-size: 16px;">${description || ''}</h3>
+        </div>
         <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
       </div>
       <div class="modal-body">
@@ -47,7 +89,7 @@ function showSharedPointModal(title, imageThen, imageNow) {
           ${images.join('')}
         </div>
         <div style="margin-top: 20px; text-align: center;">
-          <button onclick="this.closest('.modal').remove(); window.history.replaceState({}, document.title, window.location.pathname);" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+          <button onclick="this.closest('.modal').remove(); window.history.replaceState({}, document.title, window.location.pathname);" style="background: rgba(255, 255, 255, 0.9); color: #d14747; border: 1px solid rgba(209, 71, 71, 0.3); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.3s ease; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);" onmouseover="this.style.background='rgba(255, 255, 255, 1)'; this.style.color='#b83838'; this.style.borderColor='rgba(209, 71, 71, 0.5)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.2)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.color='#d14747'; this.style.borderColor='rgba(209, 71, 71, 0.3)'; this.style.transform=''; this.style.boxShadow='0 2px 8px rgba(0, 0, 0, 0.15)';">
             Explore the Map
           </button>
         </div>
@@ -57,11 +99,26 @@ function showSharedPointModal(title, imageThen, imageNow) {
   
   document.body.appendChild(modal);
   
+  // Function to clean up modal and marker
+  function cleanup() {
+    if (tempMarker) {
+      tempMarker.remove();
+    }
+    modal.remove();
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+  
+  // Update close button to use cleanup function
+  const closeBtn = modal.querySelector('.close');
+  closeBtn.onclick = cleanup;
+  
+  const exploreBtn = modal.querySelector('button');
+  exploreBtn.onclick = cleanup;
+  
   // Close modal when clicking outside
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
-      modal.remove();
-      window.history.replaceState({}, document.title, window.location.pathname);
+      cleanup();
     }
   });
 }
@@ -145,12 +202,12 @@ map.on("load", function () {
         if (images.length === 0)
           images.push(`<img src="${imageUrl}" alt="Image">`);
 
-        const shareUrl = generateShareUrl(featureId, properties.title, imageThen, imageNow);
+        const shareUrl = generateShareUrl(featureId, properties.title, properties.description, imageThen, imageNow, coordinates);
         
         const content = `
           <div id="info-panel-text">
-            <h2>${properties.title || "No title"}</h2>
-            <h3>${properties.description || "No description"}</h3>
+            <h3>${properties.title || "No title"}</h3>
+            <h3>${properties.description || "No date"}</h3>
           </div>
           <button id="share-btn" onclick="openShareModal('${shareUrl}', '${properties.title || 'Montreal Then & Now'}', '${imageThen || ''}', '${imageNow || ''}')">↗ Share</button>
           ${images.join("")}
@@ -234,13 +291,18 @@ map.on("load", function () {
 });
 
 // Generate shareable URL
-function generateShareUrl(featureId, title, imageThen, imageNow) {
+function generateShareUrl(featureId, title, description, imageThen, imageNow, coordinates) {
   const baseUrl = window.location.origin + window.location.pathname;
   const params = new URLSearchParams({
     point: featureId || 'unknown',
     title: title || 'Montreal Then & Now',
+    ...(description && { description }),
     ...(imageThen && { imageThen }),
-    ...(imageNow && { imageNow })
+    ...(imageNow && { imageNow }),
+    ...(coordinates && { 
+      lat: coordinates[1].toFixed(6), 
+      lng: coordinates[0].toFixed(6) 
+    })
   });
   return `${baseUrl}?${params.toString()}`;
 }

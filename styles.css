@@ -56,16 +56,21 @@ body {
   z-index: 1001;
 }
 
-#info-panel-text h2 {
+#info-panel-text h3:first-child {
   margin: 0;
   color: #d14747;
+  font-family: "PT Serif", serif;
+  font-style: italic;
 }
 
-#info-panel-text h3 {
+#info-panel-text h3:last-child {
   position: absolute;
   top: 10px;
   right: 50px;
   color: #000000b6;
+  margin: 0;
+  font-family: "PT Serif", serif;
+  font-style: italic;
 }
 
 #close-btn {
@@ -205,11 +210,6 @@ input:checked + .slider:before {
   font-weight: bold;
   padding: 5px;
   border-radius: 5px;
-  background-color: rgba(209, 71, 71, 0.1); /* Light background */
-}
-
-#toggle-text:hover {
-  background-color: rgba(209, 71, 71, 0.2); /* Slightly darker on hover */
 }
 
 /* Instruction Notice */
@@ -270,20 +270,20 @@ input:checked + .slider:before {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(2px);
 }
 
 .modal-content {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(16px);
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 0;
   border-radius: 16px;
   width: 90%;
   max-width: 500px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 
               inset 0 1px 0 rgba(255, 255, 255, 0.4);
   animation: modalSlideIn 0.3s ease-out;
 }
@@ -451,6 +451,19 @@ input:checked + .slider:before {
 #twitter-share:hover { border-color: #1da1f2; }
 #facebook-share:hover { border-color: #4267b2; }
 
+/* Shared Point Modal - Larger on Desktop */
+.shared-point-modal {
+  max-width: 700px;
+  width: 95%;
+}
+
+@media (min-width: 769px) {
+  .shared-point-modal {
+    width: 60%;
+    max-width: 800px;
+  }
+}
+
 /* Mobile Styles */
 @media (max-width: 768px) {
   #info-panel {
@@ -476,7 +489,7 @@ input:checked + .slider:before {
   }
   
   .modal-content {
-    margin: 5% auto;
+    margin: 2% auto;
     width: 95%;
   }
   
