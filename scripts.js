@@ -263,7 +263,7 @@ map.on("load", function () {
       
       // Keep original circle size
       const isMobile = window.innerWidth <= 768;
-      map.setPaintProperty("Points", "circle-radius", isMobile ? 8 : 4);
+      map.setPaintProperty("Points", "circle-radius", isMobile ? 8 : 8);
     }
   }
 
@@ -289,7 +289,7 @@ map.on("load", function () {
     type: "circle",
     source: "mtlinvisible",
     paint: {
-      "circle-radius": isMobile ? 8 : 4, // Increased radius on mobile
+      "circle-radius": isMobile ? 8 : 8, // Increased radius to split the difference
       "circle-color": "#d14747",
     },
     layout: {
